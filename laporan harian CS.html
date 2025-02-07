@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laporan Harian CS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <script src="main.js"></script>
+    <style>
+        .chart-container {
+            width: 90%;
+            max-width: 900px;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(208, 67, 67, 0.2);
+        }
+        canvas {
+            max-width: 100%;
+        }
+        .cs-info {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f4f4f4;
+            border-radius: 5px;
+        }
+        .ranking {
+            width: 90%;
+            max-width: 900px;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        .ranking table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+        .ranking th, .ranking td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        .ranking th {
+            background-color: #333;
+            color: white;
+        }
+        table { width: 50%; margin: 20px auto; border-collapse: collapse; }
+        th, td { padding: 10px; border: 1px solid black; }
+        th { background-color: #f4f4f4; }
+    </style>
+</head>
+<body>
+    <div class="floral-bg animate-floral"></div>
+    <div id="sidebar" class="sidebar">
+        <button class="close-btn" onclick="toggleSidebar()">×</button>
+        <ul>
+            <li><a href="profile.html">👤 Profile</a></li>
+            <li><a href="index.html">🏠 Home</a></li>
+            <li><a href="form lapran harian.html">📝 Form Laporan</a></li>
+            <li><a href="data sales.html">📊 Data Sales</a></li>
+            <li><a href="laporan harian CS.html">📞 Data Customer Service</a></li>
+            <li><a href="data lapharian.html">📆 Laporan Harian</a></li>
+            <li><button class="logout-btn" onclick="logout()">🚪 Logout</button></li>
+        </ul>
+    </div>
+    <nav class="Navbar">
+        <div id="Nav" class="Navbar">
+            <button class="menu-btn" onclick="toggleSidebar()">☰ Menu</button>
+            <a href="profile.html">Profile</a>
+            <a href="index.html">🏠 Home</a>
+            <a href="form lapran harian.html">Form Laporan</a>
+        </div>
+<main>
+    <div class="chart-container">
+        <canvas id="csChart"></canvas>
+    </div>
+    <h2>Rekap Data CS</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Nama CS</th>
+                <th>Total Transaksi</th>
+                <th>Total Insentif</th>
+            </tr>
+        </thead>
+        <tbody id="csTable">
+            <tr><td colspan="3">Memuat data...</td></tr>
+        </tbody>
+</main>        
+    </table>
+    <script>
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbwa0yiSz3u8e6zVF_bDcp4XD2BgaiG8QXZASy4260djnGhpSwfH-yyrNjyewJhaci_B/exec'; // Ganti dengan URL Web App dari Google Apps Script
+
+        async function fetchCSData() {
+            try {
+                const response = await fetch(scriptURL);
+                const csData = await response.json();
+
+                let tableBody = "";
+                for (let cs in csData) {
+                    tableBody += `
+                        <tr>
+                            <td>${cs}</td>
+                            <td>${csData[cs].totalTransaksi}</td>
+                            <td>Rp ${csData[cs].totalInsentif.toLocaleString()}</td>
+                        </tr>
+                    `;
+                }
+                document.getElementById("csTable").innerHTML = tableBody;
+                renderChart(csData);
+            } catch (error) {
+                console.error("Gagal mengambil data:", error);
+                document.getElementById("csTable").innerHTML = "<tr><td colspan='3'>Gagal memuat data.</td></tr>";
+            }
+        }
+
+        fetchCSData();
+
+        function renderChart(data) {
+            const ctx = document.getElementById('csChart').getContext('2d');
+            const labels = Object.keys(data);
+            const csData = labels.map(cs => data[cs].totalTransaksi);
+
+            const chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Total Transaksi',
+                        data: csData,
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    },
+                    onClick: (e) => {
+                        const activePoints = chart.getElementsAtEventForMode(e, 'nearest', { intersect: true }, true);
+                        if (activePoints.length > 0) {
+                            const clickedIndex = activePoints[0].index;
+                            const clickedLabel = labels[clickedIndex];
+                            const clickedValue = csData[clickedIndex];
+
+                            alert(`Nama CS: ${clickedLabel}\nTotal Transaksi: ${clickedValue}`);
+                        }
+                    }
+                }
+            });
+        }
+        // JavaScript untuk toggle menu di mobile
+        const mobileMenu = document.getElementById('mobile-menu');
+        const navLinks = document.querySelector('.nav-links');
+
+        mobileMenu.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+    </script>
+</body>
+</html>

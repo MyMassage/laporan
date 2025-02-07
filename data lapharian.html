@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laporan Harian</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="main.js"></script>
+    <style>
+        .container {
+            padding: 15px;
+        }
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+            color: #594405;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+            font-size: 1.5rem;
+        }
+        .table-wrapper {
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            background: #fff;
+            box-shadow: 0 4px 8px rgba(141, 223, 8, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+            font-size: 0.85rem;
+        }
+        table th, table td {
+            border: 1px solid #594405;
+            padding: 8px;
+            text-align: center;
+        }
+        table th {
+            background-color:  #594405;
+            color: white;
+        }
+        .total-row {
+            font-weight: bold;
+            background-color: #f9f9f990;
+        }
+        .error {
+            color: red;
+            text-align: center;
+            margin-top: 20px;
+        }
+        .clickable {
+            color: #010f06;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+        .clickable:hover {
+            color: #0056b3;
+        }
+        .button-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .reset-button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .reset-button:hover {
+            background-color: #45a049;
+        }
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            h1 {
+                font-size: 1.2rem;
+            }
+            table th, table td {
+                padding: 5px;
+                font-size: 0.75rem;
+            }
+            .reset-button {
+                padding: 8px 16px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+
+<div class="floral-bg animate-floral"></div>
+    <div id="sidebar" class="sidebar">
+        <button class="close-btn" onclick="toggleSidebar()">×</button>
+        <ul>
+            <li><a href="profile.html">👤 Profile</a></li>
+            <li><a href="index.html">🏠 Home</a></li>
+            <li><a href="form lapran harian.html">📝 Form Laporan</a></li>
+            <li><a href="data sales.html">📊 Data Sales</a></li>
+            <li><a href="laporan harian CS.html">📞 Data Customer Service</a></li>
+            <li><a href="data lapharian.html">📆 Laporan Harian</a></li>
+            <li><button class="logout-btn" onclick="logout()">🚪 Logout</button></li>
+        </ul>
+    </div>
+    <nav class="Navbar">
+        <div id="Nav" class="Navbar">
+            <button class="menu-btn" onclick="toggleSidebar()">☰ Menu</button>
+            <a href="profile.html">Profile</a>
+            <a href="index.html">🏠 Home</a>
+            <a href="form lapran harian.html">Form Laporan</a>
+        </div>
+</head>
+<body>
+<Main>
+    <div class="container">
+        <h1>Data Laporan Harian</h1>
+        <div class="button-container">
+            <button class="reset-button" onclick="loadData()">Tampilkan Semua Data</button>
+        </div>
+        <div class="table-wrapper">
+            <table id="laporanTable">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Tanggal</th>
+                        <th>Sales</th>
+                        <th>CS</th>
+                        <th>Harga</th>
+                        <th>Keterangan</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Data akan dimasukkan secara dinamis -->
+                </tbody>
+            </table>
+        </div>
+        <div id="errorMessage" class="error"></div>
+    </div>
+</Main>
+    <script>
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw2QPH_m5vbgbREdotpK58f3YqiaoZcR1sVbU7iY0JY6HnHr9VP5fouURcTXjtokHOh/exec"; // Ganti dengan URL Web App Anda
+
+        function formatTanggal(tanggal) {
+            const hari = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+            const bulan = [
+                "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+                "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+            ];
+
+            const dateObj = new Date(tanggal);
+            const namaHari = hari[dateObj.getDay()];
+            const namaBulan = bulan[dateObj.getMonth()];
+            const tanggalHari = dateObj.getDate();
+            const tahun = dateObj.getFullYear();
+
+            return `${namaHari}, ${tanggalHari} ${namaBulan} ${tahun}`;
+        }
+
+        function loadData(filter = { sales: null, date: null }) {
+            fetch(WEB_APP_URL)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("HTTP error " + response.status);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const tableBody = document.querySelector("#laporanTable tbody");
+                    tableBody.innerHTML = "";
+                    let totalHarga = 0;
+                    let nomorUrut = 1;
+
+                    data.slice(1).forEach(row => {
+                        const tanggal = row[0];
+                        const formattedTanggal = formatTanggal(tanggal);
+                        const sales = row[1];
+                        const cs = row[2];
+                        const harga = parseInt(row[3]) || 0;
+                        const keterangan = row[4] || "";
+
+                        if (
+                            (filter.sales && sales !== filter.sales) || 
+                            (filter.date && tanggal !== filter.date)
+                        ) {
+                            return;
+                        }
+
+                        const tr = document.createElement("tr");
+
+                        const tdNomor = document.createElement("td");
+                        tdNomor.textContent = nomorUrut++;
+                        tr.appendChild(tdNomor);
+
+                        const tdTanggal = document.createElement("td");
+                        const tanggalLink = document.createElement("span");
+                        tanggalLink.textContent = formattedTanggal;
+                        tanggalLink.className = "clickable";
+                        tanggalLink.addEventListener("click", () => loadData({ date: tanggal }));
+                        tdTanggal.appendChild(tanggalLink);
+                        tr.appendChild(tdTanggal);
+
+                        const tdSales = document.createElement("td");
+                        const salesLink = document.createElement("span");
+                        salesLink.textContent = sales;
+                        salesLink.className = "clickable";
+                        salesLink.addEventListener("click", () => loadData({ sales }));
+                        tdSales.appendChild(salesLink);
+                        tr.appendChild(tdSales);
+
+                        const tdCS = document.createElement("td");
+                        tdCS.textContent = cs;
+                        tr.appendChild(tdCS);
+
+                        const tdHarga = document.createElement("td");
+                        tdHarga.textContent = `Rp ${harga.toLocaleString("id-ID")}`;
+                        tr.appendChild(tdHarga);
+
+                        const tdKeterangan = document.createElement("td");
+                        tdKeterangan.textContent = keterangan;
+                        tr.appendChild(tdKeterangan);
+
+                        tableBody.appendChild(tr);
+
+                        totalHarga += harga;
+                    });
+
+                    if (filter.date) {
+                        const totalRow = document.createElement("tr");
+                        totalRow.className = "total-row";
+
+                        const tdTotalLabel = document.createElement("td");
+                        tdTotalLabel.colSpan = 4;
+                        tdTotalLabel.textContent = "Total Harga";
+                        totalRow.appendChild(tdTotalLabel);
+
+                        const tdTotalHarga = document.createElement("td");
+                        tdTotalHarga.colSpan = 2;
+                        tdTotalHarga.textContent = `Rp ${totalHarga.toLocaleString("id-ID")}`;
+                        totalRow.appendChild(tdTotalHarga);
+
+                        tableBody.appendChild(totalRow);
+                    }
+                })
+                .catch(error => {
+                    document.getElementById("errorMessage").textContent = 
+                        "Gagal memuat data: " + error.message;
+                    console.error
+
+                });
+        }
+
+        window.onload = () => loadData();
+    </script>
+
+</body>
+</html>

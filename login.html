@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login / Register</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="main.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; background: linear-gradient(to right, #1f1c2c, #928dab); }
+        .container { max-width: 400px; background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); padding: 20px; border-radius: 10px; color: white; }
+        .input-style { width: 100%; padding: 10px; border: 1px solid rgba(255, 255, 255, 0.5); border-radius: 5px; background: rgba(255, 255, 255, 0.1); color: white; }
+        .input-style::placeholder { color: rgba(255, 255, 255, 0.7); }
+        .button { width: 100%; padding: 10px; border-radius: 5px; background: #0072ff; color: white; font-weight: bold; cursor: pointer; }
+        .button:hover { background: #00c6ff; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body class="flex justify-center items-center min-h-screen">
+    <div class="container">
+        <h2 id="formTitle" class="text-center text-2xl font-bold">Login</h2>
+        <form id="authForm">
+            <div id="registerFields" class="hidden">
+                <input type="text" id="name" name="name" placeholder="Nama Lengkap" class="input-style my-2">
+                <input type="tel" id="phone" name="phone" placeholder="Nomor Telepon" class="input-style my-2">
+                <select id="job" name="job" class="input-style my-2">
+                    <option value="" disabled selected>Pilih Pekerjaan</option>
+                    <option value="Seles">Seles</option>
+                    <option value="CS">Customer Service</option>
+                </select>
+            </div>
+            <input type="email" id="email" name="email" placeholder="Email" required class="input-style my-2">
+            <input type="password" id="password" name="password" placeholder="Password" required class="input-style my-2">
+            <div id="confirmPasswordField" class="hidden">
+                <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Konfirmasi Password" class="input-style my-2">
+            </div>
+            <button type="submit" id="submitButton" class="button my-2">Login</button>
+        </form>
+        <p class="text-center mt-4">
+            <button id="toggleAuth" class="text-blue-400">Belum punya akun? Daftar di sini</button>
+        </p>
+    </div>
+
+    <script>
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbwcD_6NERfz9fWLabnqJTsW79x1-ykm-FRLjWrmfuq1bAr1MDJb86sRIoy7rWqtPzRX/exec'; // Ganti dengan URL Web App terbaru
+
+        document.getElementById('authForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+    const isRegister = !document.getElementById('registerFields').classList.contains('hidden');
+    const email = document.getElementById('email').value.trim().toLowerCase();
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirmPassword')?.value || "";
+
+    if (isRegister && password !== confirmPassword) {
+        alert('Konfirmasi password tidak sesuai!');
+        return;
+    }
+
+    const formData = {
+        action: isRegister ? 'register' : 'login',
+        email,
+        password,
+        name: document.getElementById('name')?.value || '',
+        phone: document.getElementById('phone')?.value || '',
+        job: document.getElementById('job')?.value || ''
+    };
+
+    try {
+        const response = await fetch(scriptURL, {
+            method: 'POST',
+            mode: 'cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData)
+        });
+
+        const result = await response.json();
+        alert(result.message);
+
+        if (result.success) {
+            if (isRegister) {
+                saveToLocal(formData);
+                window.location.href = 'HOME.HTML';
+            } else {
+                if (result.userData) {
+                    saveToLocal(result.userData);
+                    window.location.href = 'HOME.HTML';
+                } else {
+                    alert("Data login tidak ditemukan. Silakan coba lagi.");
+                }
+            }
+        }
+    } catch (error) {
+        alert('Terjadi kesalahan: ' + error.message);
+    }
+});
+
+// Fungsi menyimpan data ke LocalStorage
+function saveToLocal(user) {
+    if (!user || !user.name) {
+        console.error("Data user tidak valid:", user);
+        return;
+    }
+    
+    const userData = {
+        name: user.name || "Tidak Diketahui",
+        email: user.email || "",
+        phone: user.phone || "",
+        job: user.job || ""
+    };
+    localStorage.setItem("userData", JSON.stringify(userData));
+}
+
+// Pastikan tidak mencoba membaca LocalStorage yang kosong
+const userData = JSON.parse(localStorage.getItem("userData") || "{}");
+
+if (!userData.name) {
+    console.warn("User tidak ditemukan di LocalStorage. Pastikan sudah login.");
+}
+
+
+        function toggleAuth() {
+            const registerFields = document.getElementById('registerFields');
+            const confirmPasswordField = document.getElementById('confirmPasswordField');
+            const formTitle = document.getElementById('formTitle');
+            const submitButton = document.getElementById('submitButton');
+            const toggleAuth = document.getElementById('toggleAuth');
+
+            document.getElementById('authForm').reset();
+
+            registerFields.classList.toggle('hidden');
+            confirmPasswordField.classList.toggle('hidden');
+
+            if (registerFields.classList.contains('hidden')) {
+                formTitle.textContent = 'Login';
+                submitButton.textContent = 'Login';
+                toggleAuth.textContent = 'Belum punya akun? Daftar di sini';
+            } else {
+                formTitle.textContent = 'Daftar';
+                submitButton.textContent = 'Daftar';
+                toggleAuth.textContent = 'Sudah punya akun? Login di sini';
+            }
+        }
+
+        document.getElementById('toggleAuth').addEventListener('click', toggleAuth);
+        localStorage.setItem("isLoggedIn", "true");
+        localStorage.setItem("userEmail", email); // Simpan email pengguna yang login
+
+    </script>
+</body>
+</html>

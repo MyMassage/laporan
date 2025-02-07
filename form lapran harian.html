@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Laporan Harian</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="main.js"></script>
+    <style>
+        .container {
+            width: 70%;
+            max-width: 500px;
+            background: linear-gradient(to right,#04316d, #fcb69f);
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 8px 0px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            margin: 100px auto 0;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            font-size: 25px;
+            color: #faf3f3;
+        }
+
+        input, select, textarea, button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            box-sizing: border-box;
+        }
+
+        textarea {
+            resize: none;
+            height: 80px;
+        }
+
+
+    </style>
+</head>
+<div class="floral-bg animate-floral"></div>
+    <div id="sidebar" class="sidebar">
+        <button class="close-btn" onclick="toggleSidebar()">×</button>
+        <ul>
+            <li><a href="profile.html">👤 Profile</a></li>
+            <li><a href="index.html">🏠 Home</a></li>
+            <li><a href="form lapran harian.html">📝 Form Laporan</a></li>
+            <li><a href="data sales.html">📊 Data Sales</a></li>
+            <li><a href="laporan harian CS.html">📞 Data Customer Service</a></li>
+            <li><a href="data lapharian.html">📆 Laporan Harian</a></li>
+            <li><button class="logout-btn" onclick="logout()">🚪 Logout</button></li>
+        </ul>
+    </div>
+    <nav class="Navbar">
+        <div id="Nav" class="Navbar">
+            <button class="menu-btn" onclick="toggleSidebar()">☰ Menu</button>
+            <a href="profile.html">Profile</a>
+            <a href="index.html">🏠 Home</a>
+            <a href="form lapran harian.html">Form Laporan</a>
+        </div>
+</main>
+    <div class="container">
+        <h2>Form Laporan Harian</h2>
+        <form id="laporanForm">
+            <label for="tanggal">Tanggal:</label>
+            <input type="date" id="tanggal" name="tanggal" required>
+
+            <label for="sales">Sales:</label>
+            <input type="text" name="sales" id="sales" required readonly>
+
+            <label for="cs">CS:</label>
+            <select id="cs" name="cs" required>
+                <option value="" disabled selected>Pilih CS</option>
+                <option value="Dewi">Dewi</option>
+                <option value="Reni">Reni</option>
+                <option value="Rini">Rini</option>
+                <option value="Yani">Yani</option>
+                <option value="Sri">sri</option>
+            </select>
+
+            <label for="harga">Harga:</label>
+            <select id="harga" name="harga" required>
+                <option value="" disabled selected>Pilih Harga</option>
+                <option value="150000">Rp 150.000</option>
+                <option value="200000">Rp 200.000</option>
+                <option value="250000">Rp 250.000</option>
+                <option value="300000">Rp 300.000</option>
+            </select>
+
+            <label for="keterangan">Keterangan:</label>
+            <textarea id="keterangan" name="keterangan" rows="1" placeholder="Tambahkan keterangan jika ada"></textarea>
+
+            <button type="button" id="submitButton" disabled onclick="submitForm()">Kirim Laporan</button>
+        </form>
+    </div>
+</main>
+    <script>
+        const form = document.getElementById('laporanForm');
+        const submitButton = document.getElementById('submitButton');
+
+        // Fungsi untuk mengecek validasi form
+        function validateForm() {
+            const isValid = Array.from(form.elements).every(input => {
+                if (input.type !== 'button' && input.name !== 'keterangan') {
+                    return input.value.trim() !== '';
+                }
+                return true;
+            });
+
+            submitButton.disabled = !isValid;
+        }
+
+        // Periksa validasi setiap kali ada perubahan pada input
+        form.addEventListener('input', validateForm);
+
+        function submitForm() {
+            const formData = new FormData(form);
+
+            fetch("https://script.google.com/macros/s/AKfycbyx-_Afb8h1mcexRbWE70oSD6z2lLD4fNH7q2PuNk5gjvOymWeNYzgOdR9obWrstRAa/exec", {
+                method: "POST",
+                body: formData,
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.text();
+                })
+                .then(result => { 
+                    alert(result);
+                    form.reset();
+                    validateForm();
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    alert("Terjadi kesalahan: " + error.message);
+                });
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            // Ambil nama sales dari profil pengguna
+            const userData = JSON.parse(localStorage.getItem("userData"));
+            if (userData && userData.name) {
+                document.getElementById("sales").value = userData.name;
+            } else {
+                console.error("Nama sales tidak ditemukan di localStorage.");
+            }
+            // JavaScript untuk toggle menu di mobile
+        const mobileMenu = document.getElementById('mobile-menu');
+        const navLinks = document.querySelector('.nav-links');
+
+        mobileMenu.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+        });
+    </script>
+</body>
+</html>

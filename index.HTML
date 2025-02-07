@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Putri Beauty - Laporan Harian</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* CSS yang sudah ada sebelumnya */
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to bottom, #f9f3f3, #f6d6d6);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .nav-title {
+            text-align: center;
+            color: #333;
+            margin: 20px 0;
+        }
+        nav {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .nav-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+        .nav-links li {
+            margin: 0 10px;
+        }
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 600;
+        }
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+        }
+        .menu-toggle .bar {
+            width: 25px;
+            height: 3px;
+            background-color: #333;
+            margin: 4px 0;
+        }
+        .chart-container, .ranking {
+            width: 90%;
+            max-width: 900px;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .brand-logo {
+            height: 50px;
+            margin-right: 10px;
+        }
+        .welcome-message {
+            text-align: center;
+            margin: 20px 0;
+            color: #333;
+        }
+        .welcome-message h2 {
+            margin: 0;
+        }
+        .welcome-message p {
+            margin: 5px 0;
+        }
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                background: rgba(255, 255, 255, 0.9);
+                position: absolute;
+                top: 60px;
+                left: 0;
+                z-index: 1;
+            }
+            .nav-links.active {
+                display: flex;
+            }
+            .menu-toggle {
+                display: flex;
+            }
+        }
+
+        /* Animasi dan elemen floral */
+        .floral-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: url('floral-pattern.png') repeat;
+            opacity: 0.1;
+        }
+
+        .animate-floral {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        .welcome-message h2 {
+            animation: fadeInDown 2s ease-in-out;
+        }
+
+        .welcome-message p {
+            animation: fadeInUp 2s ease-in-out;
+        }
+
+        @keyframes fadeInDown {
+            0% {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Styling untuk kontainer kebijakan */
+        .policy-container {
+            width: 90%;
+            max-width: 900px;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+        }
+        .policy-container h3 {
+            margin: 0;
+            color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .policy-container h3 span {
+            transition: transform 0.3s ease;
+        }
+        .policy-container .content {
+            display: none;
+            margin-top: 10px;
+            color: #555;
+        }
+        .policy-container.active .content {
+            display: block;
+        }
+        .policy-container.active h3 span {
+            transform: rotate(180deg);
+        }
+    </style>
+</head>
+<body>
+    <div class="floral-bg animate-floral"></div>
+    <div id="sidebar" class="sidebar">
+        <button class="close-btn" onclick="toggleSidebar()">×</button>
+        <ul>
+            <li><a href="profile.html">👤 Profile</a></li>
+            <li><a href="index.html">🏠 Home</a></li>
+            <li><a href="form lapran harian.html">📝 Form Laporan</a></li>
+            <li><a href="data sales.html">📊 Data Sales</a></li>
+            <li><a href="laporan harian CS.html">📞 Data Customer Service</a></li>
+            <li><a href="data lapharian.html">📆 Laporan Harian</a></li>
+            <li><button class="logout-btn" onclick="logout()">🚪 Logout</button></li>
+        </ul>
+    </div>
+    <nav class="Navbar">
+        <div id="Nav" class="Navbar">
+            <img src="putri beuty.png" alt="Putri Beauty Logo" class="brand-logo">
+            <button class="menu-btn" onclick="toggleSidebar()">☰ Menu</button>
+            <a href="profile.html">Profile</a>
+            <a href="index.html">🏠 Home</a>
+            <a href="form lapran harian.html">Form Laporan</a>
+        </div>
+    </nav>
+
+    <main>
+        <div class="welcome-message">
+            <h2>Selamat Datang di Putri Beauty</h2>
+            <p id="userGreeting"></p>
+            <p>✨ "Kesuksesan bukan tentang siapa yang paling hebat, 
+                tapi siapa yang bisa berjalan bersama. Mari kita jaga kekompakan, 
+                saling mendukung, dan terus berusaha. Rezeki sudah diatur, 
+                tugas kita adalah menjemputnya dengan kerja keras dan kebersamaan!"</p>
+            <p>💡 "Satu tujuan, satu hati, satu perjuangan. Mari kita terus berusaha,
+                saling mendukung, dan menjaga kekompakan. Rezeki itu luas, 
+                dan Tuhan sudah siapkan bagian untuk kita. Tetap semangat, tim!"</p>
+            <p> semangat tim! 💪🔥</p>
+        </div>
+
+        <!-- Kontainer Kebijakan -->
+        <div class="policy-container" onclick="togglePolicy(this)">
+            <h3>Target Marketing & Bonus Motivasi  💪🔥<span>▼</span></h3>
+            <div class="content">
+                <p>
+                    Untuk meningkatkan kinerja dan semangat tim marketing, setiap bulan ditetapkan target 50 transaksi. 
+                    Jika target ini tercapai, tim akan mendapatkan bonus sebesar Rp500.000 sebagai apresiasi atas kerja keras dan dedikasi.
+                </p>
+                <p>
+                    Selain itu, bagi yang mampu melampaui target, akan ada tambahan bonus! 
+                    Untuk setiap kelipatan 10 transaksi setelah mencapai 50 (misalnya 60 transaksi, 70 transaksi, dan seterusnya), 
+                    akan diberikan bonus tambahan Rp100.000.
+                </p>
+                <p>
+                    💡 <strong>Contoh Perhitungan Bonus:</strong><br>
+                    ✅ 50 transaksi → Bonus Rp500.000<br>
+                    ✅ 60 transaksi → Bonus Rp600.000<br>
+                    ✅ 70 transaksi → Bonus Rp700.000<br>
+                    ✅ Dan seterusnya...
+                </p>
+                <p>
+                    Dengan sistem ini, semakin tinggi pencapaian transaksi, semakin besar pula bonus yang diperoleh. 
+                    Mari bekerja bersama, capai target, dan raih lebih banyak keuntungan! 💪🔥
+                </p>
+            </div>
+        </div>
+        <div class="policy-container" onclick="togglePolicy(this)">
+            <h3>Target Customer Service & Bonus Motivasi  💪🔥 <span>▼</span></h3>
+            <div class="content">
+                <p>
+                    Untuk meningkatkan kinerja dan semangat Customer Service, setiap bulan ditetapkan target 50 transaksi. 
+                    Jika target ini tercapai, tim akan mendapatkan bonus sebesar Rp 250.000 sebagai apresiasi atas kerja keras dan dedikasi.
+                </p>
+                <p>
+                    Selain itu, bagi yang mampu melampaui target, akan ada tambahan bonus! 
+                    Untuk setiap kelipatan 10 transaksi setelah mencapai 50 (misalnya 60 transaksi, 70 transaksi, dan seterusnya), 
+                    akan diberikan bonus tambahan Rp50.000.
+                </p>
+                <p>
+                    💡 <strong>Contoh Perhitungan Bonus:</strong><br>
+                    ✅ 50 transaksi → Bonus Rp250.000<br>
+                    ✅ 60 transaksi → Bonus Rp300.000<br>
+                    ✅ 70 transaksi → Bonus Rp400.000<br>
+                    ✅ Dan seterusnya...
+                </p>
+                <p>
+                    Dengan sistem ini, semakin tinggi pencapaian transaksi, semakin besar pula bonus yang diperoleh. 
+                    Mari bekerja bersama, capai target, dan raih lebih banyak keuntungan! 💪🔥
+                </p>
+            </div>
+        </div>
+        
+    </main>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('active');
+        }
+
+        // Logout function
+        document.getElementById("logoutBtn").addEventListener("click", function () {
+            localStorage.removeItem("isLoggedIn");
+            localStorage.removeItem("userEmail");
+            window.location.href = 'login.html';
+        });
+
+        // Cek apakah pengguna sudah login
+        window.onload = function () {
+            const isLoggedIn = localStorage.getItem("isLoggedIn");
+            const userEmail = localStorage.getItem("userEmail");
+
+            if (!isLoggedIn || !userEmail) {
+                // Jika belum login, arahkan ke halaman login
+                window.location.href = 'login.html';
+            } else {
+                // Tampilkan data pengguna atau lakukan sesuatu
+                document.getElementById('userGreeting').textContent = "Selamat datang, " + userEmail;
+            }
+        };
+
+        // Fungsi untuk toggle kebijakan
+        function togglePolicy(element) {
+            element.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>
